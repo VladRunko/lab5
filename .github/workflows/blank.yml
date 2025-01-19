@@ -17,7 +17,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build Docker image
-        run: docker build -t my-flask-app -f Dockerfile
+        run: docker buildx build -t my-flask-app -f Dockerfile .
 
       - name: Run Docker container
         run: docker run -d -p 5000:5000 my-flask-app

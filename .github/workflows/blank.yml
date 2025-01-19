@@ -20,7 +20,7 @@ jobs:
         run: docker buildx build -t my-flask-app -f Dockerfile .
 
       - name: Run Docker container
-        run: docker run -d -p 5000:5000 my-flask-app
+        run: docker run -d -p 5001:5000 my-flask-app
 
   deploy:
     runs-on: ubuntu-latest

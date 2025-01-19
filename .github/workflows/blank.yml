@@ -1,0 +1,32 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    
+    steps:
+      
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+    
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+    
+      - name: Build Docker image
+        run: docker build -t your-image-name .
+
+      - name: Push Docker image
+        run: docker push your-image-name
+
+      - name: Deploy to cloud
+        run: |
+          ssh user@your-cloud-server "docker pull your-image-name && docker run your-image-name"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

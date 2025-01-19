@@ -3,30 +3,39 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest 
-    
+    runs-on: ubuntu-latest
+
     steps:
-      
       - name: Checkout code
         uses: actions/checkout@v2
 
-    
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-    
       - name: Build Docker image
-        run: docker build -t your-image-name .
+        run: docker build -t my-flask-app .
 
-      - name: Push Docker image
-        run: docker push your-image-name
+      - name: Run Docker container
+        run: docker run -d -p 5000:5000 my-flask-app
 
-      - name: Deploy to cloud
-        run: |
-          ssh user@your-cloud-server "docker pull your-image-name && docker run your-image-name"
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull my-flask-app
+            docker run -d -p 5000:5000 my-flask-app
